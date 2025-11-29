@@ -2,19 +2,19 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-// Folder input & output
-const inputFolder = path.join(__dirname, 'input');
-const outputFolder = path.join(__dirname, 'output');
+async function upscaleImages(folder) {
+    // Folder input & output
+    const inputFolder = path.join(__dirname, `input/${folder}`);
+    const outputFolder = path.join(__dirname, `output/${folder}`);
 
-// Scale factor (ubah sesuka kamu)
-const SCALE_FACTOR = 6;
+    // Scale factor (ubah sesuka kamu)
+    const SCALE_FACTOR = 6;
 
-// Buat folder output jika belum ada
-if (!fs.existsSync(outputFolder)) {
-    fs.mkdirSync(outputFolder, { recursive: true });
-}
+    // Buat folder output jika belum ada
+    if (!fs.existsSync(outputFolder)) {
+        fs.mkdirSync(outputFolder, { recursive: true });
+    }
 
-async function upscaleImages() {
     const files = fs.readdirSync(inputFolder);
 
     for (const file of files) {
@@ -39,7 +39,7 @@ async function upscaleImages() {
                     kernel: sharp.kernel.lanczos3 // terbaik untuk upscale
                 })
                 .sharpen({
-                    sigma: 1.2,      // tingkat ketajaman (1.0 – 2.0 bagus)
+                    sigma: 1.7,      // tingkat ketajaman (1.0 – 2.0 bagus)
                     m1: 0.8,         // kontras edge
                     m2: 1.2          // penambah detail halus
                 })
@@ -52,4 +52,18 @@ async function upscaleImages() {
     }
 }
 
-upscaleImages();
+const folder = [
+    "FlickReels", "GoodShort"
+]
+
+const Starter = async () => {
+    for (let i = 0; i < folder.length; i++) {
+        console.log(folder[i])
+
+        await upscaleImages(folder[i]);
+
+        await new Promise(resolve => setTimeout(resolve, 500)); // Menunggu 3 detik
+    }
+}
+
+Starter()
